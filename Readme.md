@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Денис Вовченко](https://up.htmlacademy.ru/javascript/17/user/699567).
-* Наставник: `Неизвестно`.
+* Наставник: [Алексей Пересмехин](https://htmlacademy.ru/profile/alekseypn).
 
 ---
 
