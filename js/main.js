@@ -34,6 +34,21 @@ createPins();
 
 // Functions
 
+function getPinProps(prop) {
+  var element = document.querySelector('#pin')
+                        .content
+                        .querySelector('.map__pin')
+                        .cloneNode(true);
+
+  BODY.appendChild(element);
+
+  var value = window.getComputedStyle(element).getPropertyValue(prop);
+
+  BODY.removeChild(element);
+
+  return value ? value : '';
+}
+
 function fillMocks(count) {
   var mocks = [];
   var photoNumbers = getRandomNumsArrayWithoutRepeat(count);
@@ -103,20 +118,9 @@ function createPins() {
     pins.appendChild(pin);
   }
 
-  MAP_PINS.appendChild(pins);
+  renderPins(pins);
 }
 
-function getPinProps(prop) {
-  var element = document.querySelector('#pin')
-                        .content
-                        .querySelector('.map__pin')
-                        .cloneNode(true);
-
-  BODY.appendChild(element);
-
-  var value = window.getComputedStyle(element).getPropertyValue(prop);
-
-  BODY.removeChild(element);
-
-  return value ? value : '';
+function renderPins(pins) {
+  MAP_PINS.appendChild(pins);
 }
