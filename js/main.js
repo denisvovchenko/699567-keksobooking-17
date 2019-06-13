@@ -1,6 +1,6 @@
 'use strict';
 
-var BODY = document.querySelector('body')
+var BODY = document.querySelector('body');
 var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var MAP = document.querySelector('.map');
 var MAP_WIDTH = MAP.offsetWidth;
@@ -15,13 +15,13 @@ var MAP_DIMENSIONS = {
     start: 130,
     end: 630,
   },
-}
+};
 
 var MAP_PINS = document.querySelector('.map__pins');
 
 var PIN_SIZE = {
-  width: parseInt( getPinProps('width') ),
-  height: parseInt( getPinProps('height') ),
+  width: parseInt(getPinProps('width'), 10),
+  height: parseInt(getPinProps('height'), 10),
 };
 
 var MOCKS_LENGTH = 8;
