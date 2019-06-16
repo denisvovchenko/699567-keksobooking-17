@@ -1,14 +1,13 @@
 'use strict';
 
-function createPin(pin, i) {
+function createPin(pin, ad) {
   var pinPhoto = pin.querySelector('img');
-  var pinProps = MOCKS_FOR_PINS[i];
-  var pinCoordX = 'left: ' + pinProps.location.x + 'px;';
-  var pinCoordY = 'top: ' + pinProps.location.y + 'px;';
+  var pinCoordX = 'left: ' + ad.location.x + 'px;';
+  var pinCoordY = 'top: ' + ad.location.y + 'px;';
 
   pin.style = pinCoordX + ' ' + pinCoordY;
-  pinPhoto.src = pinProps.author.avatar;
-  pinPhoto.alt = pinProps.offer.type;
+  pinPhoto.src = ad.author.avatar;
+  pinPhoto.alt = ad.offer.type;
 
   return pin;
 }
@@ -18,18 +17,21 @@ function renderPins(pins) {
 }
 
 function addPins() {
-  var fragentForPins = document.createDocumentFragment();
+  var fragmentForPins = document.createDocumentFragment();
+  var ads = [];
+
   var sourcePin = document.querySelector('#pin')
                     .content
                     .querySelector('.map__pin');
 
-  for (var i = 0; i < MOCKS_FOR_PINS_LENGTH; i++) {
+  for (var i = 0; i < ADS_COUNT; i++) {
     var newPin = sourcePin.cloneNode(true);
+    ads[i] = createAd(i);
 
-    fragentForPins.appendChild(createPin(newPin, i));
+    fragmentForPins.appendChild(createPin(newPin, ads[i]));
   }
 
-  renderPins(fragentForPins);
+  renderPins(fragmentForPins);
 }
 
 function getPinProps(prop) {
@@ -55,10 +57,10 @@ function getRandomNum(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function createPinMock(i) {
+function createAd(i) {
   var photoNumber = getNumberWithLeadZero(i + 1);
 
-  var newPinMock = {
+  var newPinDatas = {
     author: {
       avatar: 'img/avatars/user' + photoNumber + '.png',
     },
@@ -73,20 +75,14 @@ function createPinMock(i) {
     }
   };
 
-  return newPinMock;
+  return newPinDatas;
 }
 
-function fillMocks(count) {
-  var mocksArray = [];
-
-  for (var i = 0; i < count; i++) {
-    mocksArray[i] = createPinMock(i);
-  }
-
-  return mocksArray;
+function showMap() {
+  MAP.classList.remove('map--faded');
 }
 
-// Variables
+// Variables and constants
 
 var body = document.querySelector('body');
 
@@ -113,10 +109,9 @@ var PIN_SIZE = {
   height: parseInt(getPinProps('height'), 10),
 };
 
-var MOCKS_FOR_PINS_LENGTH = 8;
-var MOCKS_FOR_PINS = fillMocks(MOCKS_FOR_PINS_LENGTH);
+var ADS_COUNT = 8;
 
 // временно
-MAP.classList.remove('map--faded');
+showMap();
 
 addPins();
