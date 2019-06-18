@@ -82,6 +82,55 @@ function showMap() {
   MAP.classList.remove('map--faded');
 }
 
+var toggleFormElements = (function () {
+  var formElements = document.querySelectorAll('.ad-form fieldset, .map__filters select, .map__filters fieldset');
+
+  return function () {
+    formElements.forEach(function (formElement) {
+      formElement.disabled = !formElement.disabled;
+    });
+  };
+})();
+
+function activateInterface() {
+  mainPin.addEventListener('mouseup', onMainPinMouseUp);
+}
+
+function setAddressInputValue(evt) {
+  var addressInput = document.querySelector('#address');
+  var mainPinDimensions = {};
+
+  if (!evt) {
+    mainPinDimensions.x = MAP_WIDTH / 2;
+    mainPinDimensions.y = MAP_HEIGHT / 2;
+
+  } else {
+    var mainPin = evt.currentTarget;
+
+    mainPinDimensions.x = Math.floor(mainPin.getBoundingClientRect().left - MAP.getBoundingClientRect().left - mainPin.offsetWidth / 2);
+    mainPinDimensions.y = Math.floor(mainPin.getBoundingClientRect().top - MAP.getBoundingClientRect().top - body.scrollTop + mainPin.offsetHeight);
+  }
+
+  addressInput.value = mainPinDimensions.x + ',' + mainPinDimensions.y;
+}
+
+function enableForms() {
+  var adForm = document.querySelector('.ad-form');
+  adForm.classList.remove('ad-form--disabled');
+
+  var mapForm = document.querySelector('.map');
+  mapForm.classList.remove('map--faded');
+}
+
+function onMainPinMouseUp(evt) {
+  toggleFormElements();
+  enableForms();
+
+  setAddressInputValue(evt);
+
+  mainPin.removeEventListener('click', onMainPinMouseUp);
+}
+
 // Variables and constants
 
 var body = document.querySelector('body');
@@ -89,6 +138,7 @@ var body = document.querySelector('body');
 var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var MAP = document.querySelector('.map');
 var MAP_WIDTH = MAP.offsetWidth;
+var MAP_HEIGHT = MAP.offsetHeight;
 
 var MAP_DIMENSIONS = {
   x: {
@@ -111,7 +161,15 @@ var PIN_SIZE = {
 
 var ADS_COUNT = 8;
 
-// временно
-showMap();
+var mainPin = document.querySelector('.map__pin--main');
 
-addPins();
+// временно
+// showMap();
+
+// addPins();
+
+setAddressInputValue();
+
+toggleFormElements();
+
+activateInterface();
