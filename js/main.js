@@ -107,8 +107,8 @@ function setAddressInputValue(evt) {
   } else {
     var mainPin = evt.currentTarget;
 
-    mainPinDimensions.x = Math.floor(mainPin.getBoundingClientRect().left - MAP.getBoundingClientRect().left - mainPin.offsetWidth / 2);
-    mainPinDimensions.y = Math.floor(mainPin.getBoundingClientRect().top - MAP.getBoundingClientRect().top - body.scrollTop + mainPin.offsetHeight);
+    mainPinDimensions.x = Math.floor(mainPin.getBoundingClientRect().left - MAP.getBoundingClientRect().left + mainPin.offsetWidth / 2);
+    mainPinDimensions.y = Math.floor(mainPin.getBoundingClientRect().top - MAP.getBoundingClientRect().top - body.scrollTop + mainPin.scrollHeight);
   }
 
   addressInput.value = mainPinDimensions.x + ',' + mainPinDimensions.y;
