@@ -78,10 +78,6 @@ function createAd(i) {
   return newPinDatas;
 }
 
-function showMap() {
-  MAP.classList.remove('map--faded');
-}
-
 var toggleFormElements = (function () {
   var formElements = document.querySelectorAll('.ad-form fieldset, .map__filters select, .map__filters fieldset');
 
@@ -93,6 +89,8 @@ var toggleFormElements = (function () {
 })();
 
 function activateInterface() {
+  mainPin.addEventListener('click', onMainPinClick);
+
   mainPin.addEventListener('mouseup', onMainPinMouseUp);
 }
 
@@ -101,34 +99,47 @@ function setAddressInputValue(evt) {
   var mainPinDimensions = {};
 
   if (!evt) {
-    mainPinDimensions.x = MAP_WIDTH / 2;
-    mainPinDimensions.y = MAP_HEIGHT / 2;
+    mainPinDimensions.x = Math.floor(MAP_WIDTH / 2);
+    mainPinDimensions.y = Math.floor(MAP_HEIGHT / 2);
 
   } else {
     var mainPin = evt.currentTarget;
 
-    mainPinDimensions.x = Math.floor(mainPin.getBoundingClientRect().left - MAP.getBoundingClientRect().left + mainPin.offsetWidth / 2);
-    mainPinDimensions.y = Math.floor(mainPin.getBoundingClientRect().top - MAP.getBoundingClientRect().top - body.scrollTop + mainPin.scrollHeight);
+    mainPinDimensions.x = Math.floor(mainPin.getBoundingClientRect().left - MAP.getBoundingClientRect().left + MAIN_PIN_SIZE.width / 2);
+    mainPinDimensions.y = Math.floor(mainPin.getBoundingClientRect().top - MAP.getBoundingClientRect().top - body.scrollTop + MAIN_PIN_SIZE.height);
   }
 
   addressInput.value = mainPinDimensions.x + ',' + mainPinDimensions.y;
 }
 
-function enableForms() {
-  var adForm = document.querySelector('.ad-form');
-  adForm.classList.remove('ad-form--disabled');
-
+function enableMap() {
   var mapForm = document.querySelector('.map');
   mapForm.classList.remove('map--faded');
 }
 
-function onMainPinMouseUp(evt) {
+function enableAdForm() {
+  var adForm = document.querySelector('.ad-form');
+  adForm.classList.remove('ad-form--disabled');
+}
+
+function enableForms() {
+  enableMap();
+
+  enableAdForm();
+}
+
+function onMainPinClick(evt) {
   toggleFormElements();
+
   enableForms();
 
-  setAddressInputValue(evt);
+  addPins();
 
-  mainPin.removeEventListener('click', onMainPinMouseUp);
+  mainPin.removeEventListener('click', onMainPinClick);
+}
+
+function onMainPinMouseUp(evt) {
+  setAddressInputValue(evt);
 }
 
 // Variables and constants
@@ -152,6 +163,12 @@ var MAP_DIMENSIONS = {
   },
 };
 
+var mainPin = document.querySelector('.map__pin--main');
+
+var MAIN_PIN_SIZE = {
+  width: 65,
+  height: 81,
+}
 var mapPins = document.querySelector('.map__pins');
 
 var PIN_SIZE = {
@@ -160,13 +177,6 @@ var PIN_SIZE = {
 };
 
 var ADS_COUNT = 8;
-
-var mainPin = document.querySelector('.map__pin--main');
-
-// временно
-// showMap();
-
-// addPins();
 
 setAddressInputValue();
 
