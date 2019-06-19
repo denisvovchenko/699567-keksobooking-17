@@ -168,7 +168,8 @@ var mainPin = document.querySelector('.map__pin--main');
 var MAIN_PIN_SIZE = {
   width: 65,
   height: 81,
-}
+};
+
 var mapPins = document.querySelector('.map__pins');
 
 var PIN_SIZE = {
