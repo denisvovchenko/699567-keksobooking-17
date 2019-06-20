@@ -88,28 +88,27 @@ var toggleFormElements = (function () {
   };
 })();
 
-function activateInterface() {
+function addMainPinEventListeners() {
   mainPin.addEventListener('click', onMainPinClick);
 
   mainPin.addEventListener('mouseup', onMainPinMouseUp);
 }
 
-function setAddressInputValue(evt) {
+function getMainPinCoords() {
+  return {
+    x: parseInt(window.getComputedStyle(mainPin).left, 10),
+    y: parseInt(window.getComputedStyle(mainPin).top, 10),
+  };
+}
+
+function setAddressInputValue() {
   var addressInput = document.querySelector('#address');
-  var mainPinDimensions = {};
+  var mainPinDimensions = getMainPinCoords();
 
-  if (!evt) {
-    mainPinDimensions.x = Math.floor(MAP_WIDTH / 2);
-    mainPinDimensions.y = Math.floor(MAP_HEIGHT / 2);
+  var addressCoordX = Math.floor(mainPinDimensions.x + (MAIN_PIN_SIZE.width / 2));
+  var addressCoordY = Math.floor(mainPinDimensions.y + (MAIN_PIN_SIZE.height / 2));
 
-  } else {
-    var mainPin = evt.currentTarget;
-
-    mainPinDimensions.x = Math.floor(mainPin.getBoundingClientRect().left - MAP.getBoundingClientRect().left + MAIN_PIN_SIZE.width / 2);
-    mainPinDimensions.y = Math.floor(mainPin.getBoundingClientRect().top - MAP.getBoundingClientRect().top - body.scrollTop + MAIN_PIN_SIZE.height);
-  }
-
-  addressInput.value = mainPinDimensions.x + ',' + mainPinDimensions.y;
+  addressInput.value = addressCoordX + ',' + addressCoordY;
 }
 
 function enableMap() {
@@ -128,7 +127,7 @@ function enableForms() {
   enableAdForm();
 }
 
-function onMainPinClick(evt) {
+function onMainPinClick() {
   toggleFormElements();
 
   enableForms();
@@ -149,7 +148,6 @@ var body = document.querySelector('body');
 var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var MAP = document.querySelector('.map');
 var MAP_WIDTH = MAP.offsetWidth;
-var MAP_HEIGHT = MAP.offsetHeight;
 
 var MAP_DIMENSIONS = {
   x: {
@@ -167,7 +165,7 @@ var mainPin = document.querySelector('.map__pin--main');
 
 var MAIN_PIN_SIZE = {
   width: 65,
-  height: 81,
+  height: 65,
 };
 
 var mapPins = document.querySelector('.map__pins');
@@ -183,4 +181,4 @@ setAddressInputValue();
 
 toggleFormElements();
 
-activateInterface();
+addMainPinEventListeners();
