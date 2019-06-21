@@ -141,6 +141,18 @@ function onMainPinMouseUp(evt) {
   setAddressInputValue(evt);
 }
 
+function synchronizeTimeIn() {
+  var timeSelects = document.querySelectorAll('#timein, #timeout');
+
+  timeSelects.forEach(function (currentSelect, index) {
+    currentSelect.addEventListener('change', function () {
+      var otherSelect = (index === 0) ? timeSelects[1] : timeSelects[0];
+
+      otherSelect.value = currentSelect.value;
+    });
+  });
+}
+
 // Variables and constants
 
 var body = document.querySelector('body');
@@ -182,3 +194,5 @@ setAddressInputValue();
 toggleFormElements();
 
 addMainPinEventListeners();
+
+synchronizeTimeIn();
