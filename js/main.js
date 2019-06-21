@@ -78,8 +78,67 @@ function createAd(i) {
   return newPinDatas;
 }
 
-function showMap() {
-  MAP.classList.remove('map--faded');
+var toggleFormElements = (function () {
+  var formElements = document.querySelectorAll('.ad-form fieldset, .map__filters select, .map__filters fieldset');
+
+  return function () {
+    formElements.forEach(function (formElement) {
+      formElement.disabled = !formElement.disabled;
+    });
+  };
+})();
+
+function addMainPinEventListeners() {
+  mainPin.addEventListener('click', onMainPinClick);
+
+  mainPin.addEventListener('mouseup', onMainPinMouseUp);
+}
+
+function getMainPinCoords() {
+  return {
+    x: parseInt(window.getComputedStyle(mainPin).left, 10),
+    y: parseInt(window.getComputedStyle(mainPin).top, 10),
+  };
+}
+
+function setAddressInputValue() {
+  var addressInput = document.querySelector('#address');
+  var mainPinDimensions = getMainPinCoords();
+
+  var addressCoordX = Math.floor(mainPinDimensions.x + (MAIN_PIN_SIZE.width / 2));
+  var addressCoordY = Math.floor(mainPinDimensions.y + (MAIN_PIN_SIZE.height / 2));
+
+  addressInput.value = addressCoordX + ',' + addressCoordY;
+}
+
+function enableMap() {
+  var mapForm = document.querySelector('.map');
+  mapForm.classList.remove('map--faded');
+}
+
+function enableAdForm() {
+  var adForm = document.querySelector('.ad-form');
+  adForm.classList.remove('ad-form--disabled');
+}
+
+function enableForms() {
+  enableMap();
+
+  enableAdForm();
+}
+
+function onMainPinClick() {
+  toggleFormElements();
+
+  enableForms();
+
+  addPins();
+
+  mainPin.removeEventListener('click', onMainPinClick);
+}
+
+function onMainPinMouseUp(evt) {
+  setAddressInputValue(evt);
 }
 
 // Variables and constants
@@ -102,6 +161,13 @@ var MAP_DIMENSIONS = {
   },
 };
 
+var mainPin = document.querySelector('.map__pin--main');
+
+var MAIN_PIN_SIZE = {
+  width: 65,
+  height: 65,
+};
+
 var mapPins = document.querySelector('.map__pins');
 
 var PIN_SIZE = {
@@ -111,7 +177,8 @@ var PIN_SIZE = {
 
 var ADS_COUNT = 8;
 
-// временно
-showMap();
+setAddressInputValue();
 
-addPins();
+toggleFormElements();
+
+addMainPinEventListeners();
