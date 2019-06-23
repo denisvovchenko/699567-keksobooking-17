@@ -142,23 +142,17 @@ function onMainPinMouseUp(evt) {
 }
 
 function synchronizeTimeIn() {
-  var timeSelects = {
-    timein: document.querySelector('#timein'),
-    timeout: document.querySelector('#timeout'),
-  };
+  var timeInSelect = document.querySelector('#timein');
+  var timeOutSelect = document.querySelector('#timeout');
+  var timeSelects = [timeInSelect, timeOutSelect];
 
-  for (var timeSelect in timeSelects) {
-    if (timeSelect) {
-      (function (currentSelect) {
-        currentSelect.addEventListener('change', function (evt) {
-          var currentSelectId = evt.target.getAttribute('id');
-          var dependentSelect = (currentSelectId === 'timein') ? timeSelects.timeout : timeSelects.timein;
+  timeSelects.forEach(function (currentSelect) {
+    currentSelect.addEventListener('change', function () {
+      var dependentSelect = (currentSelect === timeInSelect) ? timeOutSelect : timeInSelect;
 
-          dependentSelect.value = currentSelect.value;
-        });
-      })(timeSelects[timeSelect]);
-    }
-  }
+      dependentSelect.value = currentSelect.value;
+    });
+  });
 }
 
 function changeMinPriceValue(housingType) {
