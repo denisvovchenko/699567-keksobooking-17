@@ -1,5 +1,44 @@
 'use strict';
 
+// Constants and variables
+
+var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
+var MAP = document.querySelector('.map');
+var MAP_WIDTH = MAP.offsetWidth;
+var ADS_COUNT = 8;
+
+var MAP_DIMENSIONS = {
+  x: {
+    start: 0,
+    end: MAP_WIDTH,
+  },
+
+  y: {
+    start: 130,
+    end: 630,
+  },
+};
+
+var MAIN_PIN_SIZE = {
+  width: 65,
+  height: 65,
+};
+
+var PIN_SIZE = {
+  width: 65,
+  height: 65,
+};
+
+var HOUSING_PRICES = {
+  bungalo: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000,
+};
+
+var mainPin = document.querySelector('.map__pin--main');
+var mapPins = document.querySelector('.map__pins');
+
 function createPin(pin, ad) {
   var pinPhoto = pin.querySelector('img');
   var pinCoordX = 'left: ' + ad.location.x + 'px;';
@@ -32,21 +71,6 @@ function addPins() {
   }
 
   renderPins(fragmentForPins);
-}
-
-function getPinProps(prop) {
-  var element = document.querySelector('#pin')
-                        .content
-                        .querySelector('.map__pin')
-                        .cloneNode(true);
-
-  body.appendChild(element);
-
-  var propValue = window.getComputedStyle(element).getPropertyValue(prop);
-
-  body.removeChild(element);
-
-  return propValue ? propValue : '';
 }
 
 function getNumberWithLeadZero(i) {
@@ -171,49 +195,6 @@ function addHousingTypeChangesListener() {
     changeMinPriceValue(housingTypes.value);
   });
 }
-
-// Variables and constants
-
-var body = document.querySelector('body');
-
-var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
-var MAP = document.querySelector('.map');
-var MAP_WIDTH = MAP.offsetWidth;
-
-var MAP_DIMENSIONS = {
-  x: {
-    start: 0,
-    end: MAP_WIDTH,
-  },
-
-  y: {
-    start: 130,
-    end: 630,
-  },
-};
-
-var mainPin = document.querySelector('.map__pin--main');
-
-var MAIN_PIN_SIZE = {
-  width: 65,
-  height: 65,
-};
-
-var mapPins = document.querySelector('.map__pins');
-
-var PIN_SIZE = {
-  width: parseInt(getPinProps('width'), 10),
-  height: parseInt(getPinProps('height'), 10),
-};
-
-var ADS_COUNT = 8;
-
-var HOUSING_PRICES = {
-  bungalo: 0,
-  flat: 1000,
-  house: 5000,
-  palace: 10000,
-};
 
 setAddressInputValue();
 
