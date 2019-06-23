@@ -158,14 +158,7 @@ function synchronizeTimeIn() {
 function changeMinPriceValue(housingType) {
   var housingPriceInput = document.querySelector('#price');
 
-  var housingPrices = {
-    bungalo: 0,
-    flat: 1000,
-    house: 5000,
-    palace: 10000,
-  };
-
-  var minPrice = housingPrices[housingType];
+  var minPrice = HOUSING_PRICES[housingType];
 
   housingPriceInput.setAttribute('min', minPrice);
   housingPriceInput.setAttribute('placeholder', minPrice);
@@ -214,6 +207,13 @@ var PIN_SIZE = {
 };
 
 var ADS_COUNT = 8;
+
+var HOUSING_PRICES = {
+  bungalo: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000,
+};
 
 setAddressInputValue();
 
