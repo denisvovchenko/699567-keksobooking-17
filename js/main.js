@@ -142,47 +142,46 @@ function onMainPinMouseUp(evt) {
 }
 
 function synchronizeTimeIn() {
-  var timeSelects = document.querySelectorAll('#timein, #timeout');
+  var timeSelects = {
+    timein: document.querySelector('#timein'),
+    timeout: document.querySelector('#timeout'),
+  };
 
-  timeSelects.forEach(function (currentSelect, index) {
-    currentSelect.addEventListener('change', function () {
-      var otherSelect = (index === 0) ? timeSelects[1] : timeSelects[0];
+  for (var timeSelect in timeSelects) {
+    if (timeSelect) {
+      (function (currentSelect) {
+        currentSelect.addEventListener('change', function (evt) {
+          var currentSelectId = evt.target.getAttribute('id');
+          var dependentSelect = (currentSelectId === 'timein') ? timeSelects.timeout : timeSelects.timein;
 
-      otherSelect.value = currentSelect.value;
-    });
-  });
-}
-
-function selectMinPriceValue(value) {
-  switch (value) {
-    case 'flat':
-      return 1000;
-
-    case 'house':
-      return 5000;
-
-    case 'palace':
-      return 10000;
+          dependentSelect.value = currentSelect.value;
+        });
+      })(timeSelects[timeSelect]);
+    }
   }
-
-  return 0;
 }
 
-function changeMinPriceValue(type) {
-  var accomodationPrice = document.querySelector('#price');
-  var minPrice = selectMinPriceValue(type.value);
+function changeMinPriceValue(housingType) {
+  var housingPriceInput = document.querySelector('#price');
 
-  accomodationPrice.setAttribute('min', minPrice);
-  accomodationPrice.setAttribute('placeholder', minPrice);
+  var housingPrices = {
+    bungalo: 0,
+    flat: 1000,
+    house: 5000,
+    palace: 10000,
+  };
+
+  var minPrice = housingPrices[housingType];
+
+  housingPriceInput.setAttribute('min', minPrice);
+  housingPriceInput.setAttribute('placeholder', minPrice);
 }
 
-function setMinPrice() {
-  var accomodationType = document.querySelector('#type');
+function addHousingTypeChangesListener() {
+  var housingTypes = document.querySelector('#type');
 
-  changeMinPriceValue(accomodationType);
-
-  accomodationType.addEventListener('change', function () {
-    changeMinPriceValue(accomodationType);
+  housingTypes.addEventListener('change', function () {
+    changeMinPriceValue(housingTypes.value);
   });
 }
 
@@ -230,4 +229,4 @@ addMainPinEventListeners();
 
 synchronizeTimeIn();
 
-setMinPrice();
+addHousingTypeChangesListener();
