@@ -153,6 +153,39 @@ function synchronizeTimeIn() {
   });
 }
 
+function selectMinPriceValue(value) {
+  switch (value) {
+    case 'flat':
+      return 1000;
+
+    case 'house':
+      return 5000;
+
+    case 'palace':
+      return 10000;
+  }
+
+  return 0;
+}
+
+function changeMinPriceValue(type) {
+  var accomodationPrice = document.querySelector('#price');
+  var minPrice = selectMinPriceValue(type.value);
+
+  accomodationPrice.setAttribute('min', minPrice);
+  accomodationPrice.setAttribute('placeholder', minPrice);
+}
+
+function setMinPrice() {
+  var accomodationType = document.querySelector('#type');
+
+  changeMinPriceValue(accomodationType);
+
+  accomodationType.addEventListener('change', function () {
+    changeMinPriceValue(accomodationType);
+  });
+}
+
 // Variables and constants
 
 var body = document.querySelector('body');
@@ -196,3 +229,5 @@ toggleFormElements();
 addMainPinEventListeners();
 
 synchronizeTimeIn();
+
+setMinPrice();
