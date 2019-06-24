@@ -38,7 +38,7 @@ var HOUSING_PRICES = {
 
 var DRAGGING_LIMITS = {
   top: 130,
-  right: MAP.offsetWidth - mainPin.offsetWidth,
+  right: MAP.offsetWidth - MAIN_PIN_SIZE.width,
   bottom: 630,
   left: 0,
 };
