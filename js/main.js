@@ -24,6 +24,8 @@ var MAIN_PIN_SIZE = {
   height: 65,
 };
 
+var MAIN_PIN_TAIL_HEIGHT = 16;
+
 var PIN_SIZE = {
   width: 65,
   height: 65,
@@ -37,16 +39,18 @@ var HOUSING_PRICES = {
 };
 
 var DRAGGING_LIMITS = {
-  top: 130,
+  top: 130 - MAIN_PIN_SIZE.height - MAIN_PIN_TAIL_HEIGHT,
   right: MAP.offsetWidth - MAIN_PIN_SIZE.width,
-  bottom: 630,
+  bottom: 630 - MAIN_PIN_SIZE.height - MAIN_PIN_TAIL_HEIGHT,
   left: 0,
 };
 
 var mainPin = document.querySelector('.map__pin--main');
-var mainPinTailHeight = 16;
 var mapPins = document.querySelector('.map__pins');
-var isMapActivated = false;
+
+function isMapActivated() {
+  return !MAP.classList.contains('map--faded');
+}
 
 function createPin(pin, ad) {
   var pinPhoto = pin.querySelector('img');
@@ -122,9 +126,7 @@ var toggleFormElements = (function () {
 })();
 
 function initApp() {
-  if (!isMapActivated) {
-    isMapActivated = true;
-
+  if (!isMapActivated()) {
     toggleFormElements();
     enableForms();
     addPins();
@@ -194,8 +196,8 @@ function setAddressInputValue() {
   var addressCoordX = Math.floor(mainPinDimensions.x + (MAIN_PIN_SIZE.width / 2));
   var addressCoordY = Math.floor(mainPinDimensions.y + (MAIN_PIN_SIZE.height / 2));
 
-  if (isMapActivated) {
-    addressCoordY = Math.floor(mainPinDimensions.y + MAIN_PIN_SIZE.height + mainPinTailHeight);
+  if (isMapActivated()) {
+    addressCoordY = Math.floor(mainPinDimensions.y + MAIN_PIN_SIZE.height + MAIN_PIN_TAIL_HEIGHT);
   }
 
   addressInput.value = addressCoordX + ',' + addressCoordY;
