@@ -3,19 +3,12 @@
 (function () {
   var ADS_COUNT = 8;
 
-  var PIN_SIZE = {
-    width: 50,
-    height: 70,
-  };
-
   var MAIN_PIN_SIZE = {
     width: 65,
     height: 65,
   };
 
   var MAIN_PIN_TAIL_HEIGHT = 16;
-
-  var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 
   var mainPin = document.querySelector('.map__pin--main');
   var mapPins = document.querySelector('.map__pins');
@@ -46,33 +39,12 @@
 
     for (var i = 0; i < ADS_COUNT; i++) {
       var newPin = sourcePin.cloneNode(true);
-      ads[i] = createAd(i);
+      ads[i] = window.createAd(i);
 
       fragmentForPins.appendChild(createPin(newPin, ads[i]));
     }
 
     renderPins(fragmentForPins);
-  };
-
-  var createAd = function (i) {
-    var photoNumber = window.util.getNumberWithLeadZero(i + 1);
-
-    var newPinDatas = {
-      author: {
-        avatar: 'img/avatars/user' + photoNumber + '.png',
-      },
-
-      offer: {
-        type: OFFER_TYPES[window.util.getRandomNum(0, OFFER_TYPES.length - 1)],
-      },
-
-      location: {
-        x: window.util.getRandomNum(PIN_SIZE.width, window.map.WIDTH - (PIN_SIZE.width)),
-        y: window.util.getRandomNum(window.map.DIMENSIONS.y.start + PIN_SIZE.height, window.map.DIMENSIONS.y.end),
-      }
-    };
-
-    return newPinDatas;
   };
 
   var getMainPinCoords = function () {
