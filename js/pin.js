@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  var ADS_COUNT = 8;
-
   var MAIN_PIN_SIZE = {
     width: 65,
     height: 65,
@@ -11,41 +9,6 @@
   var MAIN_PIN_TAIL_HEIGHT = 16;
 
   var mainPin = document.querySelector('.map__pin--main');
-  var mapPins = document.querySelector('.map__pins');
-
-  var createPin = function (pin, ad) {
-    var pinPhoto = pin.querySelector('img');
-    var pinCoordX = 'left: ' + ad.location.x + 'px;';
-    var pinCoordY = 'top: ' + ad.location.y + 'px;';
-
-    pin.style = pinCoordX + ' ' + pinCoordY;
-    pinPhoto.src = ad.author.avatar;
-    pinPhoto.alt = ad.offer.type;
-
-    return pin;
-  };
-
-  var renderPins = function (pins) {
-    mapPins.appendChild(pins);
-  };
-
-  var addPins = function () {
-    var fragmentForPins = document.createDocumentFragment();
-    var ads = [];
-
-    var sourcePin = document.querySelector('#pin')
-                            .content
-                            .querySelector('.map__pin');
-
-    for (var i = 0; i < ADS_COUNT; i++) {
-      var newPin = sourcePin.cloneNode(true);
-      ads[i] = window.createAd(i);
-
-      fragmentForPins.appendChild(createPin(newPin, ads[i]));
-    }
-
-    renderPins(fragmentForPins);
-  };
 
   var getMainPinCoords = function () {
     var mainPinX = parseInt(window.getComputedStyle(mainPin).left, 10) + (MAIN_PIN_SIZE.width / 2);
@@ -111,7 +74,6 @@
   addMainPinEventListeners();
 
   window.pin = {
-    addPins: addPins,
     getMainPinCoords: getMainPinCoords,
   };
 })();

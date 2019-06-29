@@ -1,39 +1,46 @@
 'use strict';
 
 (function () {
-  var AD_PIN_SIZE = {
-    width: 50,
-    height: 70,
+  var mapAdPins = document.querySelector('.map__pins');
+
+  var renderPins = function (pins) {
+    mapAdPins.appendChild(pins);
   };
 
-  var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
+  var createAdPin = function (pin, ad) {
+    var pinPhoto = pin.querySelector('img');
+    var pinCoordX = 'left: ' + ad.location.x + 'px;';
+    var pinCoordY = 'top: ' + ad.location.y + 'px;';
 
-  var getNumberWithLeadZero = function (i) {
-    return i < 10 ? '0' + i : i;
+    pin.style = pinCoordX + ' ' + pinCoordY;
+    pinPhoto.src = ad.author.avatar;
+    pinPhoto.alt = ad.offer.type;
+
+    return pin;
   };
 
-  var getRandomNum = function (min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  var createAdPins = function (ads) {
+    var fragmentForPins = document.createDocumentFragment();
+    var sourcePin = document.querySelector('#pin')
+                            .content
+                            .querySelector('.map__pin');
+
+    for (var i = 0; i < ads.length; i++) {
+      var newPin = sourcePin.cloneNode(true);
+
+      fragmentForPins.appendChild(createAdPin(newPin, ads[i]));
+    }
+
+    renderPins(fragmentForPins);
   };
 
-  window.createAd = function (i) {
-    var photoNumber = getNumberWithLeadZero(i + 1);
+  var onXHRSuccess = function (data) {
+    createAdPins(data);
+  };
 
-    var newPinDatas = {
-      author: {
-        avatar: 'img/avatars/user' + photoNumber + '.png',
-      },
-
-      offer: {
-        type: OFFER_TYPES[getRandomNum(0, OFFER_TYPES.length - 1)],
-      },
-
-      location: {
-        x: getRandomNum(AD_PIN_SIZE.width, window.map.WIDTH - (AD_PIN_SIZE.width)),
-        y: getRandomNum(window.map.DIMENSIONS.y.start + AD_PIN_SIZE.height, window.map.DIMENSIONS.y.end),
-      }
-    };
-
-    return newPinDatas;
+  window.ad = {
+    add: function () {
+      window.load('https://js.dump.academy/keksobooking/data', onXHRSuccess);
+    },
   };
 })();
