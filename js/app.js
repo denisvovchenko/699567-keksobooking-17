@@ -7,7 +7,7 @@
 
       window.map.enable();
 
-      window.pin.addPins();
+      window.ad.add();
     }
   };
 

@@ -1,13 +1,6 @@
 'use strict';
 
 (function () {
-  var ADS_COUNT = 8;
-
-  var PIN_SIZE = {
-    width: 50,
-    height: 70,
-  };
-
   var MAIN_PIN_SIZE = {
     width: 65,
     height: 65,
@@ -15,65 +8,7 @@
 
   var MAIN_PIN_TAIL_HEIGHT = 16;
 
-  var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
-
   var mainPin = document.querySelector('.map__pin--main');
-  var mapPins = document.querySelector('.map__pins');
-
-  var createPin = function (pin, ad) {
-    var pinPhoto = pin.querySelector('img');
-    var pinCoordX = 'left: ' + ad.location.x + 'px;';
-    var pinCoordY = 'top: ' + ad.location.y + 'px;';
-
-    pin.style = pinCoordX + ' ' + pinCoordY;
-    pinPhoto.src = ad.author.avatar;
-    pinPhoto.alt = ad.offer.type;
-
-    return pin;
-  };
-
-  var renderPins = function (pins) {
-    mapPins.appendChild(pins);
-  };
-
-  var addPins = function () {
-    var fragmentForPins = document.createDocumentFragment();
-    var ads = [];
-
-    var sourcePin = document.querySelector('#pin')
-                            .content
-                            .querySelector('.map__pin');
-
-    for (var i = 0; i < ADS_COUNT; i++) {
-      var newPin = sourcePin.cloneNode(true);
-      ads[i] = createAd(i);
-
-      fragmentForPins.appendChild(createPin(newPin, ads[i]));
-    }
-
-    renderPins(fragmentForPins);
-  };
-
-  var createAd = function (i) {
-    var photoNumber = window.util.getNumberWithLeadZero(i + 1);
-
-    var newPinDatas = {
-      author: {
-        avatar: 'img/avatars/user' + photoNumber + '.png',
-      },
-
-      offer: {
-        type: OFFER_TYPES[window.util.getRandomNum(0, OFFER_TYPES.length - 1)],
-      },
-
-      location: {
-        x: window.util.getRandomNum(PIN_SIZE.width, window.map.WIDTH - (PIN_SIZE.width)),
-        y: window.util.getRandomNum(window.map.DIMENSIONS.y.start + PIN_SIZE.height, window.map.DIMENSIONS.y.end),
-      }
-    };
-
-    return newPinDatas;
-  };
 
   var getMainPinCoords = function () {
     var mainPinX = parseInt(window.getComputedStyle(mainPin).left, 10) + (MAIN_PIN_SIZE.width / 2);
@@ -139,7 +74,6 @@
   addMainPinEventListeners();
 
   window.pin = {
-    addPins: addPins,
     getMainPinCoords: getMainPinCoords,
   };
 })();
