@@ -7,7 +7,7 @@
 
       window.map.enable();
 
-      window.ad.add();
+      window.ad.download();
     }
   };
 
