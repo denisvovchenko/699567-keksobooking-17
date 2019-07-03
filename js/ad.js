@@ -39,7 +39,7 @@
   };
 
   window.ad = {
-    download: function () {
+    fetchServerData: function () {
       window.load('https://js.dump.academy/keksobooking/data', onXHRSuccess);
     },
   };
