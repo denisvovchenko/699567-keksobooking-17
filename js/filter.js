@@ -1,21 +1,34 @@
 'use strict';
 
 (function () {
-  var updatePinsOnChange = function (element) {
+  var updatePinsOnChange = function (element, filterName) {
     element.addEventListener('change', function () {
-      window.updateAdPins();
+      if (element.tagName === 'SELECT') {
+        housingFilter[filterName] = element.value;
+
+      } else if (element.tagName === 'INPUT') {
+
+        if (element.checked) {
+          housingFilter.features.push(filterName);
+
+        } else {
+          housingFilter.features.splice(housingFilter.features.indexOf(element.value), 1);
+        }
+      }
+
+      window.ad.updatePins();
     });
   };
 
   var housingFilterSelects = Array.from(document.querySelectorAll('.map__filter'));
   var housingFilterCheckboxes = Array.from(document.querySelectorAll('.map__checkbox'));
 
-  var housingFilter = {
-    features: housingFilterCheckboxes.map(function (checkbox) {
-      updatePinsOnChange(checkbox);
+  housingFilterCheckboxes.forEach(function (checkbox) {
+    updatePinsOnChange(checkbox, checkbox.value);
+  });
 
-      return checkbox.value;
-    }),
+  var housingFilter = {
+    features: [],
   };
 
   var filterProperties = housingFilterSelects.map(function (select) {
@@ -23,7 +36,7 @@
 
     housingFilter[filterName] = select.value;
 
-    updatePinsOnChange(select);
+    updatePinsOnChange(select, filterName);
 
     return filterName;
   });

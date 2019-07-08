@@ -3,6 +3,7 @@
 (function () {
   var ADS_MAX_COUNT = 5;
 
+  var renderTimer;
   var ads;
   var mapAdPins = document.querySelector('.map__pins');
 
@@ -10,7 +11,17 @@
                           .content
                           .querySelector('.map__pin');
 
+  var removeOldPins = function () {
+    var oldPins = Array.from(document.querySelectorAll('.map__pin:not(.map__pin--main)'));
+
+    oldPins.forEach(function (oldPin) {
+      oldPin.remove();
+    });
+  };
+
   var renderPins = function (pins) {
+    removeOldPins();
+
     mapAdPins.appendChild(pins);
   };
 
@@ -26,12 +37,12 @@
     return pin;
   };
 
-  var getAdRank = function (ad) {
+  var rankAds = function (ad) {
     var adProperties = ad.offer;
     var filterProperties = window.filter.properties;
     var filterHousing = window.filter.housing;
 
-    return filterProperties.reduce(function (rank, prop) {
+    ad.offer.rank = filterProperties.reduce(function (rank, prop) {
       if (Array.isArray(adProperties[prop])) {
         var features = adProperties[prop];
 
@@ -42,7 +53,9 @@
         }, 0);
       }
 
-      if (adProperties[prop] === filterHousing[prop]) {
+      if (String(adProperties[prop]) === String(filterHousing[prop]) &&
+          String(adProperties[prop]) !== '') {
+
         return (rank += 2);
       }
 
@@ -50,33 +63,41 @@
     }, 0);
   };
 
-  var filterAdsByRank = function (ad) {
-    var rank = getAdRank(ad);
-
-    return rank;
-  };
-
   var sortAdsByRank = function (leftElement, rightElement) {
-    var rankDiff = getAdRank(rightElement) - getAdRank(leftElement);
+    var rankDiff = rightElement.offer.rank - leftElement.offer.rank;
 
-    if (rankDiff > 0) {
+    if (rankDiff !== 0) {
       return rankDiff;
     }
 
-    if (leftElement < rightElement) {
-      return 1;
-    } else if (leftElement > rightElement) {
+    if (leftElement.offer.title < rightElement.offer.title) {
       return -1;
+    } else if (leftElement.offer.title > rightElement.offer.title) {
+      return 1;
     } else {
       return 0;
     }
   };
 
-  window.updateAdPins = function () {
+  var convertAdPrice = function (ad) {
+    if (ad.offer.price < 10000) {
+      ad.offer.price = 'low';
+    } else if (ad.offer.price > 50000) {
+      ad.offer.price = 'high';
+    } else {
+      ad.offer.price = 'middle';
+    }
+  };
+
+  var updateAdPins = function () {
     var fragmentForPins = document.createDocumentFragment();
 
+    ads.forEach(function (ad) {
+      rankAds(ad);
+      convertAdPrice(ad);
+    });
+
     var filteredAds = ads.slice()
-                         .filter(filterAdsByRank)
                          .sort(sortAdsByRank);
 
     for (var i = 0; i < ADS_MAX_COUNT; i++) {
@@ -89,16 +110,24 @@
       fragmentForPins.appendChild(createAdPin(newPin, filteredAds[i]));
     }
 
-    renderPins(fragmentForPins);
+    if (renderTimer) {
+      clearTimeout(renderTimer);
+    }
+
+    renderTimer = setTimeout(function () {
+      renderPins(fragmentForPins);
+    }, 500);
   };
 
   var onXHRSuccess = function (data) {
     ads = data;
 
-    window.updateAdPins();
+    updateAdPins();
   };
 
   window.ad = {
+    updatePins: updateAdPins,
+
     fetchServerData: function () {
       window.load('https://js.dump.academy/keksobooking/data', onXHRSuccess);
     },
