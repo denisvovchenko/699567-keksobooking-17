@@ -9,7 +9,7 @@
       } else if (element.tagName === 'INPUT') {
 
         if (element.checked) {
-          housingFilter.features.push(filterName);
+          housingFilter.features.push(element.value);
 
         } else {
           housingFilter.features.splice(housingFilter.features.indexOf(element.value), 1);
@@ -24,7 +24,7 @@
   var housingFilterCheckboxes = Array.from(document.querySelectorAll('.map__checkbox'));
 
   housingFilterCheckboxes.forEach(function (checkbox) {
-    updatePinsOnChange(checkbox, checkbox.value);
+    updatePinsOnChange(checkbox);
   });
 
   var housingFilter = {

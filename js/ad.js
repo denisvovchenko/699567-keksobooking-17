@@ -43,7 +43,7 @@
     var filterHousing = window.filter.housing;
 
     ad.offer.rank = filterProperties.reduce(function (rank, prop) {
-      if (Array.isArray(adProperties[prop])) {
+      if (prop === 'features') {
         var features = adProperties[prop];
 
         filterHousing.features.reduce(function (featuresRank, feature) {
@@ -72,8 +72,10 @@
 
     if (leftElement.offer.title < rightElement.offer.title) {
       return -1;
+
     } else if (leftElement.offer.title > rightElement.offer.title) {
       return 1;
+
     } else {
       return 0;
     }
@@ -82,8 +84,10 @@
   var convertAdPrice = function (ad) {
     if (ad.offer.price < 10000) {
       ad.offer.price = 'low';
+
     } else if (ad.offer.price > 50000) {
       ad.offer.price = 'high';
+
     } else {
       ad.offer.price = 'middle';
     }
