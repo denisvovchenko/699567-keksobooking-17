@@ -4,7 +4,7 @@
   var updatePinsOnChange = function (element, filterName) {
     element.addEventListener('change', function () {
       if (element.tagName === 'SELECT') {
-        housingFilter[filterName] = element.value;
+        housingFilter[filterName] = parseInt(element.value, 10) || element.value;
 
       } else if (element.tagName === 'INPUT') {
 

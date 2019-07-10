@@ -11,6 +11,20 @@
                           .content
                           .querySelector('.map__pin');
 
+  var convertAdsPrice = function () {
+    ads.forEach(function (ad) {
+      if (ad.offer.price < 10000) {
+        ad.offer.price = 'low';
+
+      } else if (ad.offer.price > 50000) {
+        ad.offer.price = 'high';
+
+      } else if (ad.offer.price) {
+        ad.offer.price = 'middle';
+      }
+    });
+  };
+
   var removeOldPins = function () {
     var oldPins = Array.from(document.querySelectorAll('.map__pin:not(.map__pin--main)'));
 
@@ -31,6 +45,8 @@
     var pinCoordY = 'top: ' + ad.location.y + 'px;';
 
     pin.style = pinCoordX + ' ' + pinCoordY;
+    pin.style.transform = 'translate(-50%, -100%)';
+
     pinPhoto.src = ad.author.avatar;
     pinPhoto.alt = ad.offer.type;
 
@@ -51,10 +67,8 @@
             rank++;
           }
         }, 0);
-      }
 
-      if (String(adProperties[prop]) === String(filterHousing[prop]) &&
-          String(adProperties[prop]) !== '') {
+      } else if (adProperties[prop] === filterHousing[prop]) {
 
         return (rank += 2);
       }
@@ -81,24 +95,11 @@
     }
   };
 
-  var convertAdPrice = function (ad) {
-    if (ad.offer.price < 10000) {
-      ad.offer.price = 'low';
-
-    } else if (ad.offer.price > 50000) {
-      ad.offer.price = 'high';
-
-    } else {
-      ad.offer.price = 'middle';
-    }
-  };
-
   var updateAdPins = function () {
     var fragmentForPins = document.createDocumentFragment();
 
     ads.forEach(function (ad) {
       rankAds(ad);
-      convertAdPrice(ad);
     });
 
     var filteredAds = ads.slice()
@@ -125,6 +126,8 @@
 
   var onXHRSuccess = function (data) {
     ads = data;
+
+    convertAdsPrice();
 
     updateAdPins();
   };
