@@ -2,6 +2,7 @@
 
 (function () {
   var ADS_MAX_COUNT = 5;
+
   var KEYCODE = {
     ESC: 27,
     ENTER: 13,
