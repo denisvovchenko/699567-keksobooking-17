@@ -1,78 +1,80 @@
 'use strict';
 
 (function () {
-  var MAIN_PIN_SIZE = {
-    width: 65,
-    height: 65,
-  };
-
-  var MAIN_PIN_TAIL_HEIGHT = 16;
-
-  var mainPin = document.querySelector('.map__pin--main');
 
   var Coordinates = function (x, y) {
     this.x = x;
     this.y = y;
   };
 
-  var getMainPinCoords = function () {
-    var mainPinX = parseInt(window.getComputedStyle(mainPin).left, 10) + (MAIN_PIN_SIZE.width / 2);
-    var mainPinY = parseInt(window.getComputedStyle(mainPin).top, 10) + MAIN_PIN_SIZE.height + MAIN_PIN_TAIL_HEIGHT;
+  var MainPin = function () {
+    this.html = document.querySelector('.map__pin--main');
+    this.width = 65;
+    this.height = 65;
+    this.tailHeight = 16;
+  };
+
+  MainPin.prototype.getCoords = function () {
+    var mainPinX = parseInt(window.getComputedStyle(this.html).left, 10) + (this.width / 2);
+    var mainPinY = parseInt(window.getComputedStyle(this.html).top, 10) + this.height + this.tailHeight;
 
     if (!window.map.isActivated()) {
-      mainPinY = parseInt(window.getComputedStyle(mainPin).top, 10) + (MAIN_PIN_SIZE.height / 2);
+      mainPinY = parseInt(window.getComputedStyle(this.html).top, 10) + (this.height / 2);
     }
 
-    return {
-      x: Math.floor(mainPinX),
-      y: Math.floor(mainPinY),
-    };
+    return new Coordinates(Math.floor(mainPinX), Math.floor(mainPinY));
   };
 
-  var onMainPinMouseDown = function (evt) {
+  MainPin.prototype.addEventListeners = function () {
+    this.html.addEventListener('mousedown', this.onMouseDown.bind(this));
+  };
+
+  MainPin.prototype.onMouseDown = function (evt) {
     evt.preventDefault();
 
-    var startCoords = new Coordinates(evt.clientX, evt.clientY);
+    this._startCoords = new Coordinates(evt.clientX, evt.clientY);
 
-    function onMainPinMouseMove(moveEvt) {
-      var shiftX = startCoords.x - moveEvt.clientX;
-      var shiftY = startCoords.y - moveEvt.clientY;
+    window.testThis = this;
 
-      var shift = new Coordinates(shiftX, shiftY);
+    this.bindedOnMouseMove = this.onMouseMove.bind(this);
+    this.bindedOnMouseUp = this.onMouseUp.bind(this);
 
-      startCoords = new Coordinates(moveEvt.clientX, moveEvt.clientY);
-
-      var leftCoord = Math.max(window.map.LIMITS.left, Math.min(window.map.LIMITS.right - MAIN_PIN_SIZE.width, (mainPin.offsetLeft - shift.x)));
-      var topCoord = Math.max(window.map.LIMITS.top - MAIN_PIN_SIZE.height, Math.min(window.map.LIMITS.bottom - MAIN_PIN_SIZE.height, (mainPin.offsetTop - shift.y)));
-
-      mainPin.style.left = leftCoord + 'px';
-      mainPin.style.top = topCoord + 'px';
-
-      window.app.init();
-      window.form.setAddressInputValue(moveEvt);
-    }
-
-    function onMainPinMouseUp(upEvt) {
-      upEvt.preventDefault();
-
-      window.app.init();
-      window.form.setAddressInputValue(upEvt);
-
-      document.removeEventListener('mousemove', onMainPinMouseMove);
-      document.removeEventListener('mouseup', onMainPinMouseUp);
-    }
-
-    document.addEventListener('mousemove', onMainPinMouseMove);
-    document.addEventListener('mouseup', onMainPinMouseUp);
+    document.addEventListener('mousemove', this.bindedOnMouseMove);
+    document.addEventListener('mouseup', this.bindedOnMouseUp);
   };
 
-  var addMainPinEventListeners = function () {
-    mainPin.addEventListener('mousedown', onMainPinMouseDown);
+  MainPin.prototype.onMouseMove = function (moveEvt) {
+    var shiftX = this._startCoords.x - moveEvt.clientX;
+    var shiftY = this._startCoords.y - moveEvt.clientY;
+
+    var shift = new Coordinates(shiftX, shiftY);
+
+    this._startCoords = new Coordinates(moveEvt.clientX, moveEvt.clientY);
+
+    var leftCoord = Math.max(window.map.LIMITS.left, Math.min(window.map.LIMITS.right - this.width, (this.html.offsetLeft - shift.x)));
+
+    var topCoord = Math.max(window.map.LIMITS.top - this.height, Math.min(window.map.LIMITS.bottom - this.height, (this.html.offsetTop - shift.y)));
+
+    this.html.style.left = leftCoord + 'px';
+    this.html.style.top = topCoord + 'px';
+
+    window.app.init();
+    window.form.setAddressInputValue(moveEvt);
   };
 
-  addMainPinEventListeners();
+  MainPin.prototype.onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
 
-  window.pin = {
-    getMainPinCoords: getMainPinCoords,
+    window.app.init();
+    window.form.setAddressInputValue(upEvt);
+
+    document.removeEventListener('mousemove', this.bindedOnMouseMove);
+    document.removeEventListener('mouseup', this.bindedOnMouseUp);
   };
+
+  var mainPin = new MainPin();
+
+  mainPin.addEventListeners();
+
+  window.mainPin = mainPin;
 })();

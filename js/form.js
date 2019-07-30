@@ -57,7 +57,7 @@
 
   var setAddressInputValue = function () {
     var addressInput = document.querySelector('#address');
-    var mainPinDimensions = window.pin.getMainPinCoords();
+    var mainPinDimensions = window.mainPin.getCoords();
 
     addressInput.value = mainPinDimensions.x + ',' + mainPinDimensions.y;
   };
