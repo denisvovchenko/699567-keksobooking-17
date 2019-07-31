@@ -101,11 +101,11 @@
   };
 
   var showSuccessPopup = function () {
-    console.log('success');
+
   };
 
   var showErrorPopup = function () {
-    console.log('error');
+
   };
 
   var setFormSending = function () {
