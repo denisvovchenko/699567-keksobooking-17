@@ -100,12 +100,29 @@
     guestsSelect.addEventListener('change', validateRoomsCapacity);
   };
 
+  var showSuccessPopup = function () {
+    console.log('success');
+  };
+
+  var showErrorPopup = function () {
+    console.log('error');
+  };
+
+  var setFormSending = function () {
+    form.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+
+      window.upload(form.action, form.enctype, showSuccessPopup, showErrorPopup);
+    });
+  };
+
   var formInit = function () {
     toggleFormElements();
     synchronizeTimein();
     addHousingTypeChangesListener();
     setAddressInputValue();
     setFormValidation();
+    setFormSending();
   };
 
   formInit();
