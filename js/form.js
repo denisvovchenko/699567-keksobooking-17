@@ -8,6 +8,17 @@
     palace: 10000,
   };
 
+  var roomsCapacity = {
+    1: [1],
+    2: [1, 2],
+    3: [1, 2, 3],
+    100: [0],
+  };
+
+  var form = document.querySelector('.ad-form');
+  var roomsSelect = form.querySelector('#room_number');
+  var guestsSelect = form.querySelector('#capacity');
+
   var synchronizeTimein = function () {
     var timeInSelect = document.querySelector('#timein');
     var timeOutSelect = document.querySelector('#timeout');
@@ -62,10 +73,42 @@
     addressInput.value = mainPinDimensions.x + ',' + mainPinDimensions.y;
   };
 
-  toggleFormElements();
-  synchronizeTimein();
-  addHousingTypeChangesListener();
-  setAddressInputValue();
+  var getCorrectOptions = function (roomsCount) {
+    return roomsCapacity[roomsCount].map(function (guestsOptionNumber) {
+      return document.querySelector('#capacity option[value="' + guestsOptionNumber + '"]').textContent;
+    }, '').join(', ');
+  };
+
+  var validateRoomsCapacity = function () {
+    var roomsCount = parseInt(roomsSelect.value, 10);
+    var guestsCount = parseInt(guestsSelect.value, 10);
+
+    if (roomsCapacity[roomsCount].indexOf(guestsCount) === -1) {
+      var errorString = 'Выбрано неверное количество мест. Для выбранного количества комнат возможны следующие варианты количества мест: ' + getCorrectOptions(parseInt(roomsSelect.value, 10));
+
+    } else {
+      errorString = '';
+    }
+
+    guestsSelect.setCustomValidity(errorString);
+  };
+
+  var setFormValidation = function () {
+    validateRoomsCapacity();
+
+    roomsSelect.addEventListener('change', validateRoomsCapacity);
+    guestsSelect.addEventListener('change', validateRoomsCapacity);
+  };
+
+  var formInit = function () {
+    toggleFormElements();
+    synchronizeTimein();
+    addHousingTypeChangesListener();
+    setAddressInputValue();
+    setFormValidation();
+  };
+
+  formInit();
 
   window.form = {
     enable: enableAdForm,
