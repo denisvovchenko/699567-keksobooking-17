@@ -12,6 +12,8 @@
     this.width = 65;
     this.height = 65;
     this.tailHeight = 16;
+
+    this.initialCoordinates = new Coordinates(this.html.style.left, this.html.style.top);
   };
 
   MainPin.prototype.getCoords = function () {
@@ -26,13 +28,15 @@
   };
 
   MainPin.prototype.addEventListeners = function () {
-    this.html.addEventListener('mousedown', this.onMouseDown.bind(this));
+    this.onMouseDownBinded = this.onMouseDown.bind(this);
+
+    this.html.addEventListener('mousedown', this.onMouseDownBinded);
   };
 
   MainPin.prototype.onMouseDown = function (evt) {
     evt.preventDefault();
 
-    this._startCoords = new Coordinates(evt.clientX, evt.clientY);
+    this.startCoords = new Coordinates(evt.clientX, evt.clientY);
 
     window.testThis = this;
 
@@ -44,12 +48,12 @@
   };
 
   MainPin.prototype.onMouseMove = function (moveEvt) {
-    var shiftX = this._startCoords.x - moveEvt.clientX;
-    var shiftY = this._startCoords.y - moveEvt.clientY;
+    var shiftX = this.startCoords.x - moveEvt.clientX;
+    var shiftY = this.startCoords.y - moveEvt.clientY;
 
     var shift = new Coordinates(shiftX, shiftY);
 
-    this._startCoords = new Coordinates(moveEvt.clientX, moveEvt.clientY);
+    this.startCoords = new Coordinates(moveEvt.clientX, moveEvt.clientY);
 
     var leftCoord = Math.max(window.map.LIMITS.left, Math.min(window.map.LIMITS.right - this.width, (this.html.offsetLeft - shift.x)));
 
@@ -70,6 +74,17 @@
 
     document.removeEventListener('mousemove', this.bindedOnMouseMove);
     document.removeEventListener('mouseup', this.bindedOnMouseUp);
+  };
+
+  MainPin.prototype.reset = function () {
+    this.html.style.left = this.initialCoordinates.x;
+    this.html.style.top = this.initialCoordinates.y;
+
+    window.form.setAddressInputValue();
+
+    this.html.removeEventListener('mousedown', this.onMouseDownBinded);
+
+    this.addEventListeners();
   };
 
   var mainPin = new MainPin();

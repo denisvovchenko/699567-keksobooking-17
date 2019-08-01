@@ -23,14 +23,20 @@
     left: 0,
   };
 
+  var map = document.querySelector('.map');
+  var mapFilter = map.querySelector('.map__filters');
+
   var isMapActivated = function () {
     return !MAP.classList.contains('map--faded');
   };
 
   var enableMap = function () {
-    var mapForm = document.querySelector('.map');
+    map.classList.remove('map--faded');
+  };
 
-    mapForm.classList.remove('map--faded');
+  var disableMap = function () {
+    map.classList.add('map--faded');
+    mapFilter.reset();
   };
 
   window.map = {
@@ -40,5 +46,6 @@
 
     isActivated: isMapActivated,
     enable: enableMap,
+    disable: disableMap,
   };
 })();

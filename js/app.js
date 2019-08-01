@@ -11,7 +11,21 @@
     }
   };
 
+  var reset = function () {
+    window.form.reset();
+    window.form.disable();
+
+    window.map.disable();
+
+    window.mainPin.reset();
+
+    window.ad.remove();
+
+    window.filter.reset();
+  };
+
   window.app = {
     init: init,
+    reset: reset,
   };
 })();

@@ -41,8 +41,19 @@
     return filterName;
   });
 
+  var reset = function () {
+    for (var filterItem in window.filter.housing) {
+      if (filterItem !== 'features') {
+        window.filter.housing[filterItem] = 'any';
+      }
+    }
+
+    window.filter.housing.features = [];
+  };
+
   window.filter = {
     properties: filterProperties.concat(['features']),
     housing: housingFilter,
+    reset: reset,
   };
 })();
