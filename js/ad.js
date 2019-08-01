@@ -8,6 +8,7 @@
     ENTER: 13,
   };
 
+  var adCard;
   var renderTimer;
   var ads;
   var mapAdPins = document.querySelector('.map__pins');
@@ -70,7 +71,7 @@
     pinPhoto.alt = ad.offer.type;
 
     pin.addEventListener('click', function () {
-      var adCard = new AdCard(ad);
+      adCard = new AdCard(ad);
 
       adCard.render(ad);
     });
@@ -78,28 +79,30 @@
     return pin;
   };
 
-  var rankAds = function (ad) {
-    var adProperties = ad.offer;
-    var filterProperties = window.filter.properties;
-    var filterHousing = window.filter.housing;
+  var rankAds = function () {
+    ads.forEach(function (ad) {
+      var adProperties = ad.offer;
+      var filterProperties = window.filter.properties;
+      var filterHousing = window.filter.housing;
 
-    ad.offer.rank = filterProperties.reduce(function (rank, prop) {
-      if (prop === 'features') {
-        var features = adProperties[prop];
+      ad.offer.rank = filterProperties.reduce(function (rank, prop) {
+        if (prop === 'features') {
+          var features = adProperties[prop];
 
-        filterHousing.features.reduce(function (featuresRank, feature) {
-          if (features.indexOf(feature) !== -1) {
-            rank++;
-          }
-        }, 0);
+          filterHousing.features.reduce(function (featuresRank, feature) {
+            if (features.indexOf(feature) !== -1) {
+              rank++;
+            }
+          }, 0);
 
-      } else if (adProperties[prop] === filterHousing[prop]) {
+        } else if (adProperties[prop] === filterHousing[prop]) {
 
-        return (rank += 2);
-      }
+          return (rank += 2);
+        }
 
-      return rank;
-    }, 0);
+        return rank;
+      }, 0);
+    });
   };
 
   var sortAdsByRank = function (leftElement, rightElement) {
@@ -123,9 +126,7 @@
   var updateAdPins = function () {
     var fragmentForPins = document.createDocumentFragment();
 
-    ads.forEach(function (ad) {
-      rankAds(ad);
-    });
+    rankAds();
 
     var filteredAds = ads.slice()
                          .sort(sortAdsByRank);
@@ -296,6 +297,22 @@
     this.html.remove();
   };
 
+  var removeAdPins = function () {
+    var adPins = mapAdPins.querySelectorAll('.map__pin:not(.map__pin--main)');
+
+    adPins.forEach(function (adPin) {
+      adPin.remove();
+    });
+  };
+
+  var removeAds = function () {
+    removeAdPins();
+
+    if (adCard) {
+      adCard.remove();
+    }
+  };
+
   var onXHRSuccess = function (data) {
     ads = data;
 
@@ -304,11 +321,16 @@
     updateAdPins();
   };
 
+  var fetchServerData = function () {
+    window.load('https://js.dump.academy/keksobooking/data', onXHRSuccess);
+  };
+
+  window.isEscapeKey = isEscapeKey;
+
   window.ad = {
     updatePins: updateAdPins,
+    remove: removeAds,
 
-    fetchServerData: function () {
-      window.load('https://js.dump.academy/keksobooking/data', onXHRSuccess);
-    },
+    fetchServerData: fetchServerData,
   };
 })();

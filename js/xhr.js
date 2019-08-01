@@ -26,13 +26,18 @@
     xhr.send();
   };
 
-  var upload = function (url, responseType, onSuccess, onError) {
+  var upload = function (url, responseType, cb) {
     var xhr = new XMLHttpRequest();
 
     xhr.responseType = responseType;
 
-    xhr.addEventListener('load', onSuccess);
-    xhr.addEventListener('error', onError);
+    xhr.addEventListener('load', function () {
+      cb('success');
+    });
+
+    xhr.addEventListener('error', function () {
+      cb('error');
+    });
 
     xhr.open('POST', url);
     xhr.send();

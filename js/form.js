@@ -16,8 +16,14 @@
   };
 
   var form = document.querySelector('.ad-form');
+  var housingType = form.querySelector('#type');
   var roomsSelect = form.querySelector('#room_number');
   var guestsSelect = form.querySelector('#capacity');
+
+  var popupTemplate = {
+    success: document.querySelector('#success').content.querySelector('.success'),
+    error: document.querySelector('#error').content.querySelector('.error'),
+  };
 
   var synchronizeTimein = function () {
     var timeInSelect = document.querySelector('#timein');
@@ -33,19 +39,21 @@
     });
   };
 
-  var changeMinPriceValue = function (housingType) {
+  var changeMinPriceValue = function (housingTypeValue) {
     var housingPriceInput = document.querySelector('#price');
-    var minPrice = HOUSING_PRICES[housingType];
+    var minPrice = HOUSING_PRICES[housingTypeValue];
 
     housingPriceInput.setAttribute('min', minPrice);
     housingPriceInput.setAttribute('placeholder', minPrice);
   };
 
-  var addHousingTypeChangesListener = function () {
-    var housingTypes = document.querySelector('#type');
+  var getHousingTypeValue = function () {
+    return housingType.value;
+  };
 
-    housingTypes.addEventListener('change', function () {
-      changeMinPriceValue(housingTypes.value);
+  var addHousingTypeChangesListener = function () {
+    housingType.addEventListener('change', function () {
+      changeMinPriceValue(getHousingTypeValue());
     });
   };
 
@@ -60,10 +68,19 @@
   })();
 
   var enableAdForm = function () {
-    var adForm = document.querySelector('.ad-form');
-    adForm.classList.remove('ad-form--disabled');
+    form.classList.remove('ad-form--disabled');
 
     toggleFormElements();
+  };
+
+  var disableAdForm = function () {
+    form.classList.add('ad-form--disabled');
+
+    toggleFormElements();
+  };
+
+  var resetAdForm = function () {
+    form.reset();
   };
 
   var setAddressInputValue = function () {
@@ -100,35 +117,73 @@
     guestsSelect.addEventListener('change', validateRoomsCapacity);
   };
 
-  var showSuccessPopup = function () {
+  var showResultPopup = function (result) {
+    var resultPopup = popupTemplate[result];
 
-  };
+    document.body.appendChild(resultPopup);
 
-  var showErrorPopup = function () {
+    var onEscapeKeydown = function (evt) {
+      if (window.isEscapeKey(evt)) {
+        resultPopup.remove();
+      }
 
+      document.removeEventListener('keydown', onEscapeKeydown);
+    };
+
+    var onMouseClick = function () {
+      resultPopup.remove();
+
+      document.removeEventListener('click', onMouseClick);
+    };
+
+    document.addEventListener('keydown', onEscapeKeydown);
+    document.addEventListener('click', onMouseClick);
+
+    if (result === 'success') {
+      window.app.reset();
+    }
   };
 
   var setFormSending = function () {
     form.addEventListener('submit', function (evt) {
       evt.preventDefault();
 
-      window.upload(form.action, form.enctype, showSuccessPopup, showErrorPopup);
+      window.upload(form.action, form.enctype, showResultPopup);
+    });
+  };
+
+  var setFormReseting = function () {
+    form.addEventListener('reset', function () {
+      setTimeout(function () {
+        setAddressInputValue();
+
+        changeMinPriceValue(getHousingTypeValue());
+      }, 4);
     });
   };
 
   var formInit = function () {
     toggleFormElements();
+
     synchronizeTimein();
+
     addHousingTypeChangesListener();
+
     setAddressInputValue();
+
     setFormValidation();
+
     setFormSending();
+
+    setFormReseting();
   };
 
   formInit();
 
   window.form = {
     enable: enableAdForm,
+    disable: disableAdForm,
+    reset: resetAdForm,
     setAddressInputValue: setAddressInputValue,
   };
 })();
