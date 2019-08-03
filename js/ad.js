@@ -89,11 +89,11 @@
         if (prop === 'features') {
           var features = adProperties[prop];
 
-          filterHousing.features.reduce(function (featuresRank, feature) {
+          filterHousing.features.forEach(function (feature) {
             if (features.indexOf(feature) !== -1) {
               rank++;
             }
-          }, 0);
+          });
 
         } else if (adProperties[prop] === filterHousing[prop]) {
 
