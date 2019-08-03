@@ -12,7 +12,6 @@
   };
 
   var reset = function () {
-    window.form.reset();
     window.form.disable();
 
     window.map.disable();
