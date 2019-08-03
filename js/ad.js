@@ -3,7 +3,7 @@
 (function () {
   var ADS_MAX_COUNT = 5;
 
-  var KEYCODE = {
+  window.KEYCODE = {
     ESC: 27,
     ENTER: 13,
   };
@@ -81,7 +81,16 @@
 
   var rankAds = function () {
     ads.forEach(function (ad) {
+      if (!ad.offer) {
+        ad.offer = {
+          rank: -1
+        };
+
+        return;
+      }
+
       var adProperties = ad.offer;
+
       var filterProperties = window.filter.properties;
       var filterHousing = window.filter.housing;
 
@@ -117,13 +126,16 @@
 
     } else if (leftElement.offer.title > rightElement.offer.title) {
       return 1;
-
-    } else {
-      return 0;
     }
+
+    return 0;
   };
 
   var updateAdPins = function () {
+    if (adCard) {
+      adCard.remove();
+    }
+
     var fragmentForPins = document.createDocumentFragment();
 
     rankAds();
@@ -151,7 +163,7 @@
   };
 
   var isEscapeKey = function (evt) {
-    return evt.keyCode === KEYCODE.ESC;
+    return evt.keyCode === window.KEYCODE.ESC;
   };
 
   var onEscKeydown = function (evt) {
@@ -191,9 +203,11 @@
   };
 
   AdCard.prototype.getAdFields = function () {
-    var priceText = this.data.offer.priceAmount + '₽/ночь';
-    var capacityText = this.data.offer.rooms + ' комнаты для ' + this.data.offer.guests + ' гостей';
-    var timeText = 'Заезд после ' + this.data.offer.checkin + ', выезд до ' + this.data.offer.checkout;
+    var priceText = this.data.offer.priceAmount ? this.data.offer.priceAmount + '₽/ночь' : '';
+
+    var capacityText = this.data.offer.rooms ? this.data.offer.rooms + ' комнаты для ' + this.data.offer.guests + ' гостей' : '';
+
+    var timeText = (this.data.offer.checkin && this.data.offer.checkout) ? 'Заезд после ' + this.data.offer.checkin + ', выезд до ' + this.data.offer.checkout : '';
 
     return [
       new AdField('.popup__title', this.data.offer.title),
@@ -210,7 +224,11 @@
     var self = this;
 
     fields.forEach(function (field) {
-      self.html.querySelector(field.selector).textContent = field.text;
+      if (field.text) {
+        self.html.querySelector(field.selector).textContent = field.text;
+      } else {
+        self.html.querySelector(field.selector).style.display = 'none';
+      }
     });
   };
 
@@ -220,6 +238,12 @@
     Array.from(adFeatures.children).forEach(function (adFeature) {
       adFeature.style.display = 'none';
     });
+
+    if (!this.data.offer.features.length) {
+      adFeatures.style.display = 'none';
+
+      return;
+    }
 
     this.data.offer.features.forEach(function (feature) {
       var featureElement = adFeatures.querySelector('.popup__feature--' + feature);
@@ -231,9 +255,16 @@
   };
 
   AdCard.prototype.renderAdCardPhotos = function () {
-    var adPhotos = this.html.querySelector('.popup__photos');
-    var adPhotoTemplate = adPhotos.querySelector('.popup__photo');
     var photos = this.data.offer.photos;
+    var adPhotos = this.html.querySelector('.popup__photos');
+
+    if (!photos.length) {
+      adPhotos.style.display = 'none';
+
+      return;
+    }
+
+    var adPhotoTemplate = adPhotos.querySelector('.popup__photo');
 
     var photosFragment = document.createDocumentFragment();
 
@@ -319,6 +350,8 @@
     convertAdsPrice();
 
     updateAdPins();
+
+    window.map.enableFilter();
   };
 
   var fetchServerData = function () {
