@@ -25,6 +25,21 @@
 
   var map = document.querySelector('.map');
   var mapFilter = map.querySelector('.map__filters');
+  var mapFilterElements = mapFilter.querySelectorAll('select, fieldset');
+
+  var toggleMapFilter = function () {
+    mapFilterElements.forEach(function (mapFilterElement) {
+      mapFilterElement.disabled = !mapFilterElement.disabled;
+    });
+  };
+
+  var enableMapFilter = function () {
+    toggleMapFilter();
+  };
+
+  var disableMapFilter = function () {
+    toggleMapFilter();
+  };
 
   var isMapActivated = function () {
     return !MAP.classList.contains('map--faded');
@@ -36,8 +51,13 @@
 
   var disableMap = function () {
     map.classList.add('map--faded');
+
+    disableMapFilter();
+
     mapFilter.reset();
   };
+
+  toggleMapFilter();
 
   window.map = {
     DIMENSIONS: MAP_DIMENSIONS,
@@ -47,5 +67,7 @@
     isActivated: isMapActivated,
     enable: enableMap,
     disable: disableMap,
+
+    enableFilter: enableMapFilter,
   };
 })();
