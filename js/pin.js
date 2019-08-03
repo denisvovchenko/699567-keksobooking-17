@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  var isEnterKey = function (evt) {
+    return evt.keyCode === window.KEYCODE.ENTER;
+  };
 
   var Coordinates = function (x, y) {
     this.x = x;
@@ -29,8 +32,17 @@
 
   MainPin.prototype.addEventListeners = function () {
     this.onMouseDownBinded = this.onMouseDown.bind(this);
+    this.onEnterKeydownBinded = this.onEnterKeydown.bind(this);
 
     this.html.addEventListener('mousedown', this.onMouseDownBinded);
+    this.html.addEventListener('keydown', this.onEnterKeydownBinded);
+  };
+
+  MainPin.prototype.onEnterKeydown = function (evt) {
+    if (isEnterKey(evt)) {
+      this.onMouseDownBinded(evt);
+      this.onMouseUpBinded(evt);
+    }
   };
 
   MainPin.prototype.onMouseDown = function (evt) {
@@ -40,11 +52,11 @@
 
     window.testThis = this;
 
-    this.bindedOnMouseMove = this.onMouseMove.bind(this);
-    this.bindedOnMouseUp = this.onMouseUp.bind(this);
+    this.onMouseMoveBinded = this.onMouseMove.bind(this);
+    this.onMouseUpBinded = this.onMouseUp.bind(this);
 
-    document.addEventListener('mousemove', this.bindedOnMouseMove);
-    document.addEventListener('mouseup', this.bindedOnMouseUp);
+    document.addEventListener('mousemove', this.onMouseMoveBinded);
+    document.addEventListener('mouseup', this.onMouseUpBinded);
   };
 
   MainPin.prototype.onMouseMove = function (moveEvt) {
@@ -72,8 +84,8 @@
     window.app.init();
     window.form.setAddressInputValue(upEvt);
 
-    document.removeEventListener('mousemove', this.bindedOnMouseMove);
-    document.removeEventListener('mouseup', this.bindedOnMouseUp);
+    document.removeEventListener('mousemove', this.onMouseMoveBinded);
+    document.removeEventListener('mouseup', this.onMouseUpBinded);
   };
 
   MainPin.prototype.reset = function () {
