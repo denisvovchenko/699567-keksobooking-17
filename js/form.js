@@ -15,6 +15,7 @@
     100: [0],
   };
 
+  var main = document.querySelector('main');
   var form = document.querySelector('.ad-form');
   var housingType = form.querySelector('#type');
   var roomsSelect = form.querySelector('#room_number');
@@ -58,7 +59,7 @@
   };
 
   var toggleFormElements = (function () {
-    var formElements = document.querySelectorAll('.ad-form fieldset, .map__filters select, .map__filters fieldset');
+    var formElements = document.querySelectorAll('.ad-form fieldset');
 
     return function () {
       formElements.forEach(function (formElement) {
@@ -92,6 +93,7 @@
 
   var getCorrectOptions = function (roomsCount) {
     return roomsCapacity[roomsCount].map(function (guestsOptionNumber) {
+
       return document.querySelector('#capacity option[value="' + guestsOptionNumber + '"]').textContent;
     }, '').join(', ');
   };
@@ -120,7 +122,7 @@
   var showResultPopup = function (result) {
     var resultPopup = popupTemplate[result];
 
-    document.body.appendChild(resultPopup);
+    main.appendChild(resultPopup);
 
     var onEscapeKeydown = function (evt) {
       if (window.isEscapeKey(evt)) {
@@ -140,7 +142,7 @@
     document.addEventListener('click', onMouseClick);
 
     if (result === 'success') {
-      window.app.reset();
+      form.reset();
     }
   };
 
@@ -154,6 +156,8 @@
 
   var setFormReseting = function () {
     form.addEventListener('reset', function () {
+      window.app.reset();
+
       setTimeout(function () {
         setAddressInputValue();
 
