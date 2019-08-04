@@ -22,7 +22,7 @@
                                .content
                                .querySelector('.map__card');
 
-  var accomodationType = {
+  var accommodationType = {
     flat: 'Квартира',
     bungalo: 'Бунгало',
     house: 'Дом',
@@ -213,7 +213,7 @@
       new AdField('.popup__title', this.data.offer.title),
       new AdField('.popup__text--address', this.data.offer.address),
       new AdField('.popup__text--price', priceText),
-      new AdField('.popup__type', accomodationType[this.data.offer.type]),
+      new AdField('.popup__type', accommodationType[this.data.offer.type]),
       new AdField('.popup__text--capacity', capacityText),
       new AdField('.popup__text--time', timeText),
       new AdField('.popup__description', this.data.offer.description),

@@ -8,6 +8,8 @@
     palace: 10000,
   };
 
+  var FILE_TYPES = ['jpg', 'png', 'svg', 'gif'];
+
   var roomsCapacity = {
     1: [1],
     2: [1, 2],
@@ -20,10 +22,67 @@
   var housingType = form.querySelector('#type');
   var roomsSelect = form.querySelector('#room_number');
   var guestsSelect = form.querySelector('#capacity');
+  var accommodationPhotoWrapperTemplate = form.querySelector('.ad-form__photo');
 
   var popupTemplate = {
     success: document.querySelector('#success').content.querySelector('.success'),
     error: document.querySelector('#error').content.querySelector('.error'),
+  };
+
+  var isImage = function (file) {
+    return FILE_TYPES.some(function (type) {
+      return file.name.toLowerCase().endsWith(type);
+    });
+  };
+
+  var renderUploadImages = function (fileChooser, cb) {
+    var file = fileChooser.files[0];
+
+    if (isImage(file)) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        cb(reader);
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  var setUserAvatar = function () {
+    var fileChooser = form.querySelector('.ad-form-header__input');
+    var avatar = form.querySelector('.ad-form-header__upload img');
+
+    var userAvatarCallback = function (reader) {
+      avatar.setAttribute('src', reader.result);
+    };
+
+    fileChooser.addEventListener('change', function () {
+      renderUploadImages(fileChooser, userAvatarCallback);
+    });
+  };
+
+  var setAccommodationPhotos = function () {
+    var fileChooser = form.querySelector('.ad-form__input');
+    var accommodationPhotoContainer = form.querySelector('.ad-form__photo-container');
+
+    var accommodationPhotosCallback = function (reader) {
+      var accommodationPhotoWrapper = accommodationPhotoWrapperTemplate.cloneNode(true);
+
+      var accommodationPhoto = accommodationPhotoWrapper.querySelector('img');
+      accommodationPhoto.setAttribute('src', reader.result);
+
+      if (accommodationPhotoWrapperTemplate) {
+        accommodationPhotoWrapperTemplate.remove();
+      }
+
+      accommodationPhotoWrapper.appendChild(accommodationPhoto);
+      accommodationPhotoContainer.appendChild(accommodationPhotoWrapper);
+    };
+
+    fileChooser.addEventListener('change', function () {
+      renderUploadImages(fileChooser, accommodationPhotosCallback);
+    });
   };
 
   var synchronizeTimein = function () {
@@ -180,6 +239,10 @@
     setFormSending();
 
     setFormReseting();
+
+    setUserAvatar();
+
+    setAccommodationPhotos();
   };
 
   formInit();
